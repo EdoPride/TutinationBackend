@@ -1,5 +1,4 @@
-﻿namespace Tutination;
-
+﻿namespace Tunination;
 public class Events
 {
 public int EventID { get; set; }

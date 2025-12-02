@@ -1,4 +1,4 @@
-﻿namespace Tutination;
+﻿namespace Tunination;
 
 public class Appointments
 {
@@ -13,5 +13,5 @@ public class Appointments
 
     // Navigation
     public Users ?User { get; set; }
-    public Services ?Service { get; set; }
+    public MyServices ?Service { get; set; }
 }

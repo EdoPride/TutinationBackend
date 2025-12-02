@@ -1,4 +1,4 @@
-﻿namespace Tutination;
+﻿namespace Tunination;
 
 public class PaymentAppointment
 {

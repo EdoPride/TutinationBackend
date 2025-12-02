@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Tutination.Models;
+using Tunination;
 
-namespace Tutination.Controllers;
+namespace Tunination.Controllers;
 
 public class AuthController : Controller
 {

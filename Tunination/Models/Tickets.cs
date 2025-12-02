@@ -1,5 +1,4 @@
-﻿namespace Tutination;
-
+﻿namespace Tunination;
 public class Tickets
 {
      public int TicketID { get; set; }

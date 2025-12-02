@@ -1,4 +1,4 @@
-﻿namespace Tutination;
+﻿namespace Tunination;
 
 public class AppointmentsDao
 {
@@ -13,6 +13,6 @@ public class AppointmentsDao
 
     // Navigation
     public Users ?User { get; set; }
-    public Services ?Service { get; set; }
+    public MyServices ?Service { get; set; }
 
 }

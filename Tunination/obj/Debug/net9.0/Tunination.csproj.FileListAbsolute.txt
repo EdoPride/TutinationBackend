@@ -1,0 +1,8 @@
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.csproj.AssemblyReference.cache
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.GeneratedMSBuildEditorConfig.editorconfig
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.AssemblyInfoInputs.cache
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.AssemblyInfo.cs
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.csproj.CoreCompileInputs.cache
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.MvcApplicationPartsAssemblyInfo.cs
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.MvcApplicationPartsAssemblyInfo.cache
+/Users/dodo/my Projects/TutinationBackend/Tunination/obj/Debug/net9.0/Tunination.sourcelink.json
