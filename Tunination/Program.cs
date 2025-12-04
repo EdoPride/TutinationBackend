@@ -33,11 +33,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             )
         };
     });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+        policy.WithOrigins("http://localhost:5174", "http://127.0.0.1:5174")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials()
+    );
+});
+
+
+
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 var app = builder.Build();
+
+
+app.UseRouting();
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 // Configure the HTTP request pipeline.
@@ -47,7 +66,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
 
 var summaries = new[]
 {
@@ -67,7 +87,7 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
-
+app.MapControllers();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
