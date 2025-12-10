@@ -15,7 +15,7 @@ public class AuthController : ControllerBase
         tdb = tutination;
     }
 
-[HttpGet("register")]
+[HttpPost("register")]
 public async Task<IActionResult> Register([FromBody] UsersDao model)
 {
     if (model == null)
@@ -52,15 +52,16 @@ public async Task<IActionResult> Login([FromBody] LoginModel model)
 {
     if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
         return BadRequest("Email and password are required.");
-
+    bool success = false;
     var user = await tdb.GetByEmailAsync(model.Email);
     if (user == null)
-        return NotFound("User not found.");
+        return NotFound(new { message = "User not found", success });
 
     if (!BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
-        return Unauthorized("Invalid password.");
+        return Unauthorized(new { message = "Invalid password", success });
 
-    return Ok(new { message = "Login successful" });
+    success = true;
+    return Ok(new { message = "Login successful", userId = user.UserID, userName = user.FullName ,role = user.Role , success = true });
 }
 
     [HttpPost("logout")]
