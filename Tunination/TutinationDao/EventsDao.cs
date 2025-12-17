@@ -12,6 +12,8 @@ public class EventsDao
     public int ?Capacity { get; set; }
     public int ?RemainingCapacity { get; set; }
 
+  public IFormFile? Image { get; set; }
+    public byte[]? ImageBytes { get; set; }
     // Navigation
     public List<TicketsDao> ?Tickets { get; set; }
     public List<EventBookingsDao> ?EventBookings { get; set; }
