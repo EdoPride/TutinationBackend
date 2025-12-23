@@ -9,7 +9,7 @@ public interface ITutination
     public Task<int> AddAsync(UsersDao entity);
     public Task<bool> UpdateAsync(UsersDao entity);
     public Task<bool> DeleteAsync(int id);
-
+   
     public Task<UsersDao?> GetByEmailAsync(string email);
     public Task<bool> CheckEmailExistsAsync(string email);
 
@@ -50,11 +50,25 @@ public interface ITutination
     public Task<int> AddPaymentAsync(PaymentsDao entity);
     public Task<bool> UpdatePaymentAsync(PaymentsDao entity);
     public Task<bool> DeletePaymentAsync(int id);
-    public Task<PaymentsDao?> GetPaymentByReferenceAsync(string referenceId);
 
 //PaymentTicket
-   public Task LinkPaymentToTicketAsync(int paymentId, int ticketId);
    //payment appointment
-    public Task LinkPaymentToAppointmentAsync(int paymentId, int appointmentId);
+   public Task<IEnumerable<PaymentTicketDao?>> GetAllPaymentByReferenceAsync();
+
+   public Task AddPaymentReferenceAsync(PaymentTicketDao dto);
+   //update payment reference
+   public Task<bool> UpdatePaymentReferenceAsync(int ticketId, string status);
+Task<PaymentLinksDao?> GetPaymentLinksByIdAsync(int id);
+
+Task<bool> UpdatePodcastPaymentLinkAsync(int id, string newLink);
+Task<bool> UpdateStudioPaymentLinkAsync(int id, string newLink);
+
+Task<bool> DeletePodcastPaymentLinkAsync(int id);
+Task<bool> DeleteStudioPaymentLinkAsync(int id);
+public  Task<string?> GetPodcastPaymentLinkAsync(int id);
+
+public Task<string?> GetStudioPaymentLinkAsync(int id);
+ //get all payment links
+    public Task<IEnumerable<PaymentLinksDao?>> GetAllPaymentLinksAsync();
 
 }

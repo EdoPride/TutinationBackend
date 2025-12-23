@@ -10,6 +10,7 @@ public class TutinationRepo : ITutination
     public TutinationRepo(IDbConnection dbConnection)
     {
         db = dbConnection;
+    
     }
     
    //user 
@@ -68,23 +69,73 @@ public class TutinationRepo : ITutination
 
 
 //event
-public Task<IEnumerable<EventsDao?>> GetAllEventsAsync()
+public async Task<IEnumerable<EventsDao?>> GetAllEventsAsync()
     {
-        throw new NotImplementedException();
-    }
+         string query = @"
+        SELECT 
+            EventID,
+            Title,
+            Description,
+            Location,
+            StartDate,
+            EndDate,
+            Price,
+            Capacity,
+            RemainingCapacity,
+            Image AS ImageBytes,
+            PaymentLink
+        FROM Events
+        ORDER BY StartDate ASC;
+    ";
+
+    return await  db.QueryAsync<EventsDao?>(query);
+}
+
     public Task<EventsDao?> GetEventByIdAsync(int id){
         throw new NotImplementedException();
     }
-    public Task<int> AddEventAsync(EventsDao entity){
-        throw new NotImplementedException();
-    }
+    public async Task<int> AddEventAsync(EventsDao entity)
+    {
+          string query = @"
+        INSERT INTO Events (
+            Title,
+            Description,
+            Location,
+            StartDate,
+            EndDate,
+            Price,
+            Capacity,
+            RemainingCapacity,
+            Image,
+            PaymentLink
+        )
+        VALUES (
+            @Title,
+            @Description,
+            @Location,
+            @StartDate,
+            @EndDate,
+            @Price,
+            @Capacity,
+            @RemainingCapacity,
+            @ImageBytes,
+            @PaymentLink
+        );
+
+        SELECT CAST(SCOPE_IDENTITY() AS INT);
+    ";
+
+    return await db.ExecuteScalarAsync<int>(query, entity);
+}
+
     public Task<bool> UpdateEventAsync(EventsDao entity){
         throw new NotImplementedException();
     }
-    public Task<bool> DeleteEventAsync(int id){
-        throw new NotImplementedException();
+    public async Task<bool> DeleteEventAsync(int id){
+        string query = @"DELETE FROM Events WHERE EventID = @Id";
+        int rowsAffected = await db.ExecuteAsync(query, new { Id = id });
+        return rowsAffected > 0;
     }
-
 
 //tickets
     public Task<IEnumerable<TicketsDao?>> GetAllTicketsAsync(){
@@ -126,20 +177,91 @@ public Task<IEnumerable<EventsDao?>> GetAllEventsAsync()
    }
 
 //apppointments
-    public Task<IEnumerable<AppointmentsDao?>> GetAllAppointmentsAsync(){
-        throw new NotImplementedException();
+    public async Task<IEnumerable<AppointmentsDao?>> GetAllAppointmentsAsync(){
+       string query = @"
+        SELECT 
+            AppointmentID,
+            UserID,
+            AppointmentDate,
+            StartTime,
+            EndTime,
+            Status,
+            Notes,
+            ServiceType
+        FROM Appointments;
+    ";
+    return await db.QueryAsync<AppointmentsDao>(query);
+
     }
-    public Task<AppointmentsDao?> GetAppointmentByIdAsync(int id){
-        throw new NotImplementedException();
+    public Task<AppointmentsDao?> GetAppointmentByIdAsync(int id)
+    {
+        string query = @"
+        SELECT 
+            AppointmentID,
+            UserID,
+            ServiceType,
+            AppointmentDate,
+            StartTime,
+            EndTime,
+            Status,
+            Notes
+        FROM Appointments
+        WHERE AppointmentID = @Id;
+    ";
+        return db.QuerySingleOrDefaultAsync<AppointmentsDao?>(query, new { Id = id });
+        
     }
-    public Task<int> AddAppointmentAsync(AppointmentsDao entity){
-        throw new NotImplementedException();
+    public async Task<int> AddAppointmentAsync(AppointmentsDao entity)
+    {
+         string query = @"
+        INSERT INTO Appointments (
+            UserID,
+            ServiceType,
+            AppointmentDate,
+            StartTime,
+            EndTime,
+            Status,
+            Notes
+        )
+        VALUES (
+            @UserID,
+            @ServiceType,
+            @AppointmentDate,
+            @StartTime,
+            @EndTime,
+            @Status,
+            @Notes
+        );
+
+        SELECT CAST(SCOPE_IDENTITY() AS INT);
+    ";
+
+    return await db.ExecuteScalarAsync<int>(query, entity);
+        
     }
-    public Task<bool> UpdateAppointmentAsync(AppointmentsDao entity){
-        throw new NotImplementedException();
-    }
-    public Task<bool> DeleteAppointmentAsync(int id){
-        throw new NotImplementedException();
+    public async Task<bool> UpdateAppointmentAsync(AppointmentsDao entity){
+        string query = @"
+        UPDATE Appointments
+        SET 
+            ServiceType = @ServiceType,
+            AppointmentDate = @AppointmentDate,
+            StartTime = @StartTime,
+            EndTime = @EndTime,
+            Status = @Status,
+            Notes = @Notes
+        WHERE AppointmentID = @AppointmentID;
+    ";
+
+    int rowsAffected = await db.ExecuteAsync(query, entity);
+    return rowsAffected > 0;
+}
+
+    public  async Task<bool> DeleteAppointmentAsync(int id)
+    {
+         string query = @"DELETE FROM Appointments WHERE AppointmentID = @Id";
+       var rowsAffected = await db.ExecuteAsync(query, new { Id = id });
+       return rowsAffected >0;
+        
     }
     public Task<IEnumerable<PaymentsDao?>> GetPaymentsByUserAsync(int userId){
         throw new NotImplementedException();
@@ -160,16 +282,158 @@ public Task<IEnumerable<EventsDao?>> GetAllEventsAsync()
     public Task<bool> DeletePaymentAsync(int id){
         throw new NotImplementedException();
     }
-    public Task<PaymentsDao?> GetPaymentByReferenceAsync(string referenceId){
-        throw new NotImplementedException();
-    }
+
+public async Task<IEnumerable<PaymentTicketDao?>>  GetAllPaymentByReferenceAsync()
+{
+    var query = @"
+        SELECT
+            PaymentID,
+            UserID,
+            EventID,
+            Amount,
+            Currency,
+            PaymentDate,
+            PaymentStatus
+        FROM PaymentTickets
+        ORDER BY PaymentDate DESC
+    ";
+
+    return await db.QueryAsync<PaymentTicketDao>(query);
+}
 
     //PaymentTicket
-   public Task LinkPaymentToTicketAsync(int paymentId, int ticketId){
-       throw new NotImplementedException();
-   }
-   //payment appointment
-    public Task LinkPaymentToAppointmentAsync(int paymentId, int appointmentId){
-        throw new NotImplementedException();
-    }
+ public async Task AddPaymentReferenceAsync(PaymentTicketDao dto)
+{
+    var query = @"
+        INSERT INTO PaymentTickets
+        (
+            UserID,
+            EventID,
+            Amount,
+            Currency,
+            PaymentDate,
+            PaymentStatus
+        )
+        VALUES
+        (
+            @UserID,
+            @EventID,
+            @Amount,
+            @Currency,
+            @PaymentDate,
+            @PaymentStatus
+        );";
+
+    await db.ExecuteAsync(query, new
+    {
+        dto.UserID,
+        dto.EventID,
+        dto.Amount,
+        dto.Currency,
+        dto.PaymentDate,
+        dto.PaymentStatus
+    });
 }
+
+public async Task<bool> UpdatePaymentReferenceAsync(int PaymentId, string status)
+{
+    var query = @"
+        UPDATE PaymentTickets
+        SET PaymentStatus = @PaymentStatus
+        WHERE PaymentID = @PaymentID
+    ";
+
+    var rows = await db.ExecuteAsync(query, new
+    {
+        PaymentID = PaymentId,
+        PaymentStatus = status
+    });
+
+    return rows > 0;
+}
+
+//add paymentlink  to user 
+public async Task AddPaymentLinksAsync(PaymentLinksDao entity)
+{
+    var query = @"
+        INSERT INTO PaymentLinks (
+            PodcastPaymentLink, 
+            StudioPaymentLink
+        )
+        VALUES (@PodcastPaymentLink, @StudioPaymentLink)";
+    
+    await db.ExecuteAsync(query, entity);
+}
+public async Task<PaymentLinksDao?> GetPaymentLinksByIdAsync(int id)
+{
+    var query = @"SELECT * FROM PaymentLinks WHERE Id = @Id";
+    return await db.QueryFirstOrDefaultAsync<PaymentLinksDao>(query, new { Id = id });
+}
+
+public async Task<bool> UpdatePodcastPaymentLinkAsync(int id, string newLink)
+{
+    var query = @"
+        UPDATE PaymentLinks
+        SET PodcastPaymentLink = @Link,
+            UpdatedAt = GETDATE()
+        WHERE Id = @Id";
+
+    var rows = await db.ExecuteAsync(query, new { Id = id, Link = newLink });
+    return rows > 0;
+}
+
+
+public async Task<bool> UpdateStudioPaymentLinkAsync(int id, string newLink)
+{
+    var query = @"
+        UPDATE PaymentLinks
+        SET StudioPaymentLink = @Link,
+            UpdatedAt = GETDATE()
+        WHERE Id = @Id";
+
+    var rows = await db.ExecuteAsync(query, new { Id = id, Link = newLink });
+    return rows > 0;
+}
+public async Task<bool> DeletePodcastPaymentLinkAsync(int id)
+{
+    var query = @"
+        UPDATE PaymentLinks
+        SET PodcastPaymentLink = NULL,
+            UpdatedAt = GETDATE()
+        WHERE Id = @Id";
+
+    return await db.ExecuteAsync(query, new { Id = id }) > 0;
+}
+
+public async Task<bool> DeleteStudioPaymentLinkAsync(int id)
+{
+    var query = @"
+        UPDATE PaymentLinks
+        SET StudioPaymentLink = NULL,
+            UpdatedAt = GETDATE()
+        WHERE Id = @Id";
+
+    return await db.ExecuteAsync(query, new { Id = id }) > 0;
+}
+
+public async Task<string?> GetPodcastPaymentLinkAsync(int id)
+{
+    var query = @"SELECT PodcastPaymentLink FROM PaymentLinks WHERE Id = @Id";
+    return await db.ExecuteScalarAsync<string?>(query, new { Id = id });
+}
+public async Task<string?> GetStudioPaymentLinkAsync(int id)
+{
+    var query = @"SELECT StudioPaymentLink FROM PaymentLinks WHERE Id = @Id";
+    return await db.ExecuteScalarAsync<string?>(query, new { Id = id });   
+
+}
+    public Task<IEnumerable<PaymentLinksDao?>> GetAllPaymentLinksAsync()
+    {
+        var query = @"SELECT * FROM PaymentLinks";
+        return db.QueryAsync<PaymentLinksDao?>(query);
+    }
+
+}
+ 
+
+

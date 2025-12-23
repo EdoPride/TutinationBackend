@@ -61,14 +61,57 @@ public async Task<IActionResult> Login([FromBody] LoginModel model)
         return Unauthorized(new { message = "Invalid password", success });
 
     success = true;
-    return Ok(new { message = "Login successful", userId = user.UserID, userName = user.FullName ,role = user.Role , success = true });
+    return Ok(new { message = "Login successful", userId = user.UserID, userName = user.FullName ,userEmail = user.Email, role = user.Role , success = true });
 }
 
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+
+    [HttpGet("Get-count")]
+    public async Task<IActionResult> GetUserCount()
     {
-        return Ok();
-    }
+       var countuser = (await tdb.GetAllAsync()).Count();
+       // appointmeent couunt
+       var countappointment = (await tdb.GetAllAppointmentsAsync()).Count();
+       //event count
+       var countevent = (await tdb.GetAllEventsAsync()).Count();
+return Ok(new { countuser, countappointment, countevent });
 
     }
-    
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangePassword(
+        [FromForm] string newPassword,
+        [FromForm] int userId
+    )
+    {
+        var user = await tdb.GetByIdAsync(userId);
+        if (user == null)
+            return NotFound("User not found");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+        var success = await tdb.UpdateAsync(user);
+        if (!success)
+            return StatusCode(500, "Failed to update password");
+
+        return Ok(new { message = "Password updated successfully" });
+    }
+
+   [HttpPut("change-email")]
+    public async Task<IActionResult> ChangeEmail(
+        [FromForm] string email,
+        [FromForm] int userId
+    )
+    {
+        var user = await tdb.GetByIdAsync(userId);
+        if (user == null)
+            return NotFound("User not found");
+
+        user.Email = email;
+
+        var success = await tdb.UpdateAsync(user);
+        if (!success)
+            return StatusCode(500, "Failed to update email");
+
+        return Ok(new { message = "Email updated successfully" });
+    }
+
+ }

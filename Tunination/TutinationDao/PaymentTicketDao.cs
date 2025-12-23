@@ -1,11 +1,15 @@
 ﻿namespace Tunination;
 
-public class PaymentTicketLinkDao
+public class PaymentTicketDao
 {
  public int PaymentID { get; set; }
-    public int AppointmentID { get; set; }
+    public int UserID { get; set; }
+    public int EventID { get; set; }
+        public int TicketID { get; set; }
 
-    // Navigation
-    public Payments ?Payment { get; set; }
-    public Tickets ?Ticket { get; set; }
+    public decimal Amount { get; set; }
+    public string ?Currency { get; set; }
+    public DateTime ?PaymentDate { get; set; }
+    public string ?PaymentStatus { get; set; }
+
 }

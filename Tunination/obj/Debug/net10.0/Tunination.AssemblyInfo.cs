@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tunination")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+176362560a5edc22d4bc8562a9c114b260f2e11b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7123e2db18a09d06b6c9b412935fc1587d63fb09")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tunination")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tunination")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

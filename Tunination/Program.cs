@@ -6,6 +6,8 @@ using Tunination.Services;
 using Tunination;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Tunitation;
+using NETCore.MailKit;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("TutinationConnection");
@@ -16,6 +18,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
 builder.Services.AddScoped<ITutination, TutinationRepo>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<EmailService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
