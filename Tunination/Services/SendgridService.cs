@@ -5,26 +5,23 @@ using System.Net;
 using MailKit.Security;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-namespace Tunination
+
+namespace Tunination;
+
+public class SendgridService
 {
-    public class EmailService
-    {
+    //sendgrid
+
         private const string SenderEmail = "cerenachris@gmail.com";
         private const string SenderPassword = "xhup csmu qckb etnv"; // Gmail App Password
         private const string SmtpServer = "smtp.gmail.com";
         private const int SmtpPort = 587;
        
 
- /// <summary>
- /// 
- /// </summary>
- /// <param name="recipientEmail"></param>
- /// <param name="subject"></param>
- /// <param name="body"></param>
- /// <returns></returns>
-public async Task<bool> SendEmailAsync(string recipientEmail, string subject, string body)
-{
-    var message = new MimeMessage();
+
+         public async Task<bool> SendEmailWithGridAsync(string recipientEmail, string subject, string body)
+         {
+         var message = new MimeMessage();
     message.From.Add(new MailboxAddress("Tunination", SenderEmail));
     message.To.Add(new MailboxAddress("", recipientEmail));
     message.Subject = subject;
@@ -44,12 +41,12 @@ public async Task<bool> SendEmailAsync(string recipientEmail, string subject, st
         await client.DisconnectAsync(true);
     }
     return true;
-}
+         }
 
-//send email with attachement to admin
-public async Task<bool> SendEmailAsynctoAdmin(string recipientEmail, string subject, string body, byte[] attachment)
-{
-    var message = new MimeMessage();
+         //send email with attachment to admin
+         public async Task<bool> SendEmailWithGridToAdmin(string recipientEmail, string subject, string body, byte[] attachment)
+    {
+         var message = new MimeMessage();
     message.From.Add(new MailboxAddress("Tunination", SenderEmail));
     message.To.Add(new MailboxAddress("", recipientEmail));
     message.Subject = subject;
@@ -72,11 +69,12 @@ public async Task<bool> SendEmailAsynctoAdmin(string recipientEmail, string subj
                 await client.DisconnectAsync(true);
             }
            return true;
-        }
-        //send email with attachement to user
-        public async Task<bool> SendEmailAsynctoUser(string recipientEmail, string subject, string body)
-        {
-            var message = new MimeMessage();
+    }
+
+         //send  email of ticket to user
+         public async Task<bool> SendEmailWithGridToUser(string recipientEmail, string subject, string body, byte[] ticket)
+    {
+         var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Tunination", SenderEmail));
             message.To.Add(new MailboxAddress("", recipientEmail));
             message.Subject = subject;
@@ -96,29 +94,19 @@ public async Task<bool> SendEmailAsynctoAdmin(string recipientEmail, string subj
                 await client.DisconnectAsync(true);
             }
               return true;
-        }
+    }
+         //send email with attachment to user
+         public async Task<bool> SendEmailWithGridToUserProof(string recipientEmail, string subject, string body, byte[] ticketBytes, string fileName)
+         {
+             var message = new MimeMessage();
+             message.From.Add(new MailboxAddress("TutiNation", SenderEmail));
+             message.To.Add(new MailboxAddress("", recipientEmail));
+             message.Subject = subject;
 
-
-        //send emaiil of ticket to user
-  // send email of ticket to user
-// send email of ticket to user
-public async Task<bool> SendTicketEmailToUser(
-    string recipientEmail,
-    string subject,
-    string body,
-    byte[] ticketBytes,
-    string fileName      // <-- important: preserve .png or .jpg
-)
-{
-    var message = new MimeMessage();
-    message.From.Add(new MailboxAddress("TutiNation", SenderEmail));
-    message.To.Add(new MailboxAddress("", recipientEmail));
-    message.Subject = subject;
-
-    var bodyBuilder = new BodyBuilder
-    {
-        HtmlBody = body
-    };
+             var bodyBuilder = new BodyBuilder
+             {
+                 HtmlBody = body
+             };
 
     // Attach the image (NOT a PDF)
     bodyBuilder.Attachments.Add(fileName, ticketBytes);
@@ -131,8 +119,5 @@ public async Task<bool> SendTicketEmailToUser(
     await client.SendAsync(message);
     await client.DisconnectAsync(true);
     return true;
-}
-
-
-    }
+        }
 }
